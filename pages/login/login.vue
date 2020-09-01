@@ -1,130 +1,235 @@
 <template>
-	<view class="wrap">
-		<view class="top"></view>
-		<view class="content">
-			<view class="title">欢迎登录抽奖</view>
-			<input class="u-border-bottom" type="number" v-model="tel" placeholder="请输入手机号" />
-			<view class="tips">未注册的手机号验证后自动创建美团账号</view>
-			<button @tap="submit" :style="[inputStyle]" class="getCaptcha">获取短信验证码</button>
-			<view class="alternative">
-				<view class="password">密码登录</view>
-				<view class="issue">遇到问题</view>
+	<view class="login">
+		<view class="login-top bg-active">
+			<view class="desc">
+				<view class="title">Hi~</view>
+				<text>{{ appName }}欢迎您</text>
+			</view>
+			<image class="login-pic" src="/static/login-pic.png"></image>
+		</view>
+		<view class="login-type-content">
+			<image class="login-bg" src="/static/login-bg.png"></image>
+			<view class="main">
+				<block>
+					<view class="login-type-form">
+						<view class="input-item">
+							<text class="iconfont iconzhanghuffffffpx"></text>
+							<input class="login-type-input" type="number" name="mobile" v-model="loginParams.mobile" placeholder="请输入手机号码"
+							 maxlength="11" />
+						</view>
+						<view class="input-item">
+							<text class="iconfont iconmimaffffffpx"></text>
+							<input class="login-type-input" type="password" v-model="loginParams.password" placeholder="请输入密码" maxlength="20" />
+						</view>
+					</view>
+					<button class="confirm-btn bg-active" :disabled="btnLoading" :loading="btnLoading" @tap="toLogin">
+						登录
+					</button>
+				</block>
+
 			</view>
 		</view>
-		<view class="buttom">
-			<view class="loginType">
-				<view class="wechat item">
-					<view class="icon"><u-icon size="70" name="weixin-fill" color="rgb(83,194,64)"></u-icon></view>
-					微信
-				</view>
-				<view class="QQ item">
-					<view class="icon"><u-icon size="70" name="qq-fill" color="rgb(17,183,233)"></u-icon></view>
-					QQ
-				</view>
-			</view>
-			<view class="hint">
-				登录代表同意
-				<text class="link">泗洪农商行用户协议、隐私政策，</text>
-				并授权使用您的泗洪农商行账号信息（如昵称、头像、收获地址）以便您统一管理
-			</view>
+		<view class="login-type-bottom text-active">
+			{{ appName }} 版权所有
 		</view>
 	</view>
 </template>
-
 <script>
-export default {
-	data() {
-		return {
-			tel: ''
-		}
-	},
-	computed: {
-		inputStyle() {
-			let style = {};
-			if(this.tel) {
-				style.color = "#fff";
-				style.backgroundColor = this.$u.color['warning'];
+	export default {
+		data() {
+			return {
+				loginParams: {
+					mobile: '',
+					password: ''
+				},
+				btnLoading: false,
+				smsCodeBtnDisabled: true,
+				userInfo: null,
+				appName: '泗洪农商银行',
+			};
+		},
+		onLoad(options) {
+			this.tabCurrentIndex = parseInt(options.type || 0, 10);
+		},
+		methods: {
+			// 提交表单
+			async toLogin() {
+				uni.showToast({
+					title: '点击了登录按钮'
+				});
 			}
-			return style;
 		}
-	},
-	methods: {
-		submit() {
-			if(this.$u.test.mobile(this.tel)) {
-				this.$u.route({
-					url: 'pages/template/login/code'
-				})
-			}
-		}
-	}
-};
+	};
 </script>
+<style lang="scss">
+	page {
+		background: #fff;
+	}
 
-<style lang="scss" scoped>
-.wrap {
-	font-size: 28rpx;
-	.content {
-		width: 600rpx;
-		margin: 80rpx auto 0;
+	.login {
+		width: 100%;
+		position: relative;
 
-		.title {
-			text-align: left;
-			font-size: 60rpx;
-			font-weight: 500;
-			margin-bottom: 100rpx;
+		.bg-active {
+			background-color: #fa3534;
+			color: #fff;
 		}
-		input {
-			text-align: left;
-			margin-bottom: 10rpx;
-			padding-bottom: 6rpx;
+
+		.text-active,
+		.iconfont {
+			color: #fa3534;
 		}
-		.tips {
-			color: $u-type-info;
-			margin-bottom: 60rpx;
-			margin-top: 8rpx;
+
+		.back-btn {
+			position: absolute;
+			left: 40rpx;
+			z-index: 9999;
+			padding-top: var(--status-bar-height);
+			top: 40rpx;
+			font-size: 48rpx;
+			color: #fff;
 		}
-		.getCaptcha {
-			background-color: rgb(253, 243, 208);
-			color: $u-tips-color;
-			border: none;
-			font-size: 30rpx;
-			padding: 12rpx 0;
-			
-			&::after {
-				border: none;
+
+		.login-top {
+			height: 460rpx;
+			position: relative;
+
+			.desc {
+				color: #fff;
+				position: absolute;
+				top: 200rpx;
+				left: 40rpx;
+				font-size: 48rpx;
+
+				.title {
+					font-size: 48rpx;
+				}
+			}
+
+			.login-pic {
+				position: absolute;
+				width: 220rpx;
+				height: 270rpx;
+				right: 30rpx;
+				top: 100rpx;
 			}
 		}
-		.alternative {
-			color: $u-tips-color;
-			display: flex;
-			justify-content: space-between;
-			margin-top: 30rpx;
+
+		.login-type-content {
+			position: relative;
+			top: -72rpx;
+
+			.login-bg {
+				width: 94vw;
+				height: 94vw;
+				margin: 0 3vw;
+			}
+
+			.main {
+				width: 94vw;
+				position: absolute;
+				top: 0;
+				left: 3vw;
+
+				.nav-bar {
+					display: flex;
+					height: 100rpx;
+					justify-content: center;
+					align-items: center;
+					position: relative;
+					z-index: 10;
+
+					.nav-bar-item {
+						flex: 1;
+						display: flex;
+						height: 100%;
+						line-height: 96rpx;
+						font-size: 32rpx;
+						display: flex;
+						margin: 0 120rpx;
+						justify-content: center;
+					}
+
+					.nav-bar-item-active {
+						border-bottom: 5rpx solid;
+					}
+				}
+
+				.login-type-form {
+					width: 80%;
+					margin: 50rpx auto;
+
+					.input-item {
+						position: relative;
+						height: 90rpx;
+						line-height: 90rpx;
+						margin-bottom: 30rpx;
+
+						.iconfont {
+							font-size: 50rpx;
+							position: absolute;
+							left: 0;
+						}
+
+						.login-type-input {
+							height: 90rpx;
+							padding-left: 80rpx;
+							border-bottom: 1rpx solid rgba(0, 0, 0, .1);
+						}
+
+						.sms-code-btn,
+						sms-code-resend {
+							width: 240rpx;
+							font-size: 26rpx;
+						}
+					}
+				}
+
+				.login-type-tips {
+					padding: 0 50rpx;
+					display: flex;
+					justify-content: space-between;
+					font-size: 28upx;
+					color: #666;
+				}
+
+				.confirm-btn {
+					margin-top: 60upx;
+					width: 80%;
+					height: 80rpx;
+					line-height: 80rpx;
+				}
+			}
 		}
-	}
-	.buttom {
-		.loginType {
-			display: flex;
-			padding: 350rpx 150rpx 150rpx 150rpx;
-			justify-content:space-between;
-			
-			.item {
+
+		.login-type-bottom {
+			width: 100%;
+			padding-bottom: 30rpx;
+			text-align: center;
+			font-size: 32rpx;
+		}
+
+		// 发送验证码样式
+		.input-item-sms-code {
+			.input-wrapper {
 				display: flex;
-				flex-direction: column;
+				justify-content: space-between;
 				align-items: center;
-				color: $u-content-color;
-				font-size: 28rpx;
 			}
-		}
-		
-		.hint {
-			padding: 20rpx 40rpx;
-			font-size: 20rpx;
-			color: $u-tips-color;
-			
-			.link {
-				color: $u-type-warning;
+
+			.sms-code-btn {
+				width: 200upx;
+				background-color: #fff;
+				display: flex;
+				padding: 15upx 0;
+				justify-content: center;
+				align-items: center;
+				border-radius: 12upx;
+			}
+
+			.sms-code-resend {
+				color: #666;
 			}
 		}
 	}
-}
 </style>
