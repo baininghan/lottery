@@ -12,6 +12,7 @@ import store from './store'
 Vue.config.$store = store
 
 const app = new Vue({
+	store,
     ...App
 })
 

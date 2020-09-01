@@ -14,8 +14,7 @@
 					<view class="login-type-form">
 						<view class="input-item">
 							<text class="iconfont iconzhanghuffffffpx"></text>
-							<input class="login-type-input" type="number" name="account" v-model="loginParams.account" placeholder="请输入账号"
-							 maxlength="11" />
+							<input class="login-type-input" name="userName" v-model="loginParams.userName" placeholder="请输入账号" maxlength="11" />
 						</view>
 						<view class="input-item">
 							<text class="iconfont iconmimaffffffpx"></text>
@@ -34,13 +33,18 @@
 	</view>
 </template>
 <script>
-	import {mapState, mapMutations, mapGetters} from 'vuex'
-	
+	import {
+		mapState,
+		mapMutations,
+		mapGetters
+	} from 'vuex'
+	import md5Libs from '../../uview-ui/libs/function/md5.js'
+
 	export default {
 		data() {
 			return {
 				loginParams: {
-					account: '',
+					userName: '',
 					password: ''
 				},
 				btnLoading: false,
@@ -53,24 +57,38 @@
 			this.tabCurrentIndex = parseInt(options.type || 0, 10);
 		},
 		methods: {
-			...mapMutations(['login']),
-			async toLogin() {
-				if(this.$u.test.isEmpty(this.loginParams.account)) {
+			...mapMutations(['login', 'setToken']),
+			toLogin() {
+				if (this.$u.test.isEmpty(this.loginParams.userName)) {
 					this.$u.toast('请输入账号')
 					return false;
 				}
-				if(this.$u.test.isEmpty(this.loginParams.password)) {
+				if (this.$u.test.isEmpty(this.loginParams.password)) {
 					this.$u.toast('请输入密码')
 					return false;
 				}
+
+				let userName = this.loginParams.userName;
+				let password = this.loginParams.password;
+				let params = {'userName': userName}
+				let c = md5Libs.md5(userName + md5Libs.md5(password));
+				this.setToken(c)
 				
-				this.$u.login('/login', this.loginParams).then(res => {
+				this.$u.api.login(this.loginParams).then(res => {
 					this.$u.toast('登录成功')
 					this.login(res)
 					uni.navigateTo({
 						url: '../form/form'
 					})
+				}).catch(res => {
+					console.log(res);
 				})
+
+				
+				
+				// this.$u.post('/business/m/login?userName=' + userName, params).then(res => {
+				// 	console.log(res);
+				// });
 			}
 		}
 	};

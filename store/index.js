@@ -7,6 +7,7 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		userInfo: uni.getStorageSync('userInfo'),
+		token: ''
 	},
 	getters: {
 		hasLogin: state => {
@@ -35,6 +36,9 @@ const store = new Vuex.Store({
 				key: 'userInfo'
 			})
 		},
+		setToken(state, token) {
+			state.token = token
+		}
 	}
 })
 

@@ -36,6 +36,7 @@
 
 <script>
 	import AlmostLottery from '@/components/almost-lottery/almost-lottery.vue'
+
 	export default {
 		name: 'Home',
 		components: {
@@ -64,7 +65,7 @@
 				// 是否已登录
 				hasLogin: false,
 				thStyle: {
-					"bg-color":"#f56726"
+					"bg-color": "#f56726"
 				}
 			}
 		},
@@ -72,150 +73,41 @@
 		// 	this.hasLogin = this.$store.hasLogin
 		// },
 		onLoad() {
-			this.hasLogin = this.$store.hasLogin
-			if (!this.hasLogin) {
-				uni.navigateTo({
-					url: '../login/login'
-				})
-			}
+			// this.hasLogin = this.$store.hasLogin
+			// if (!this.hasLogin) {
+			// 	uni.navigateTo({
+			// 		url: '../login/login'
+			// 	})
+			// }
 		},
 		methods: {
 			// 重新生成
 			handleInitCanvas() {
 				this.prizeList = []
-				this.getPrizeList()
+				// this.getPrizeList()
+				this.getMockPrizeList()
 			},
 			// 获取奖品列表
 			getPrizeList() {
 				uni.showLoading({
 					title: '奖品准备中...'
 				})
-				// 模拟请求奖品列表
-				let stoTimer = setTimeout(() => {
-					clearTimeout(stoTimer)
-					stoTimer = null
 
-					// stock 奖品库存
-					// weight 中奖概率，数值越大中奖概率越高
-					this.prizeList = [{
-							prizeId: 1,
-							name: '0.1元现金',
-							stock: 10,
-							weight: 1,
-							imgSrc: '/static/lottery-prize/git.png'
-						},
-						{
-							prizeId: 2,
-							name: '10元现金',
-							stock: 0,
-							weight: 0
-						},
-						{
-							prizeId: 3,
-							name: '5元话费',
-							stock: 1,
-							weight: 0
-						},
-						{
-							prizeId: 4,
-							name: '50元现金',
-							stock: 0,
-							weight: 0
-						},
-						{
-							prizeId: 5,
-							name: '1卷抽纸',
-							stock: 3,
-							weight: 3
-						},
-						{
-							prizeId: 6,
-							name: '0.2元现金',
-							stock: 8,
-							weight: 2
-						},
-						{
-							prizeId: 7,
-							name: '谢谢参与',
-							stock: 100,
-							weight: 10000
-						},
-						{
-							prizeId: 8,
-							name: '100金币',
-							stock: 100,
-							weight: 1000
-						}
-					]
-
-					// 计算出权重的总和并生成权重数组
-					if (this.isFrontend) {
-						this.prizeList.forEach((item) => this.weightTotal += item.weight)
-						this.weightArr = this.prizeList.map((item) => item.weight)
-					}
-				}, 500)
+				// TODO 从后台
+				this.$u.getPrizeList('', {}).then(res => {
+					this.prizeList = res.result;
+				})
 			},
 			// 本次抽奖开始
 			handleDrawStart() {
-				console.log('this.hasLogin=' + this.hasLogin);
-				if(!this.hasLogin) {
-					uni.navigateTo({
-						url: '../login/login'
-					})
-					return false;
-				}
+
 				this.targetName = ''
 
 				let list = [...this.prizeList]
+				this.$u.lottery('', {}).then(res => {
+					this.$u.toast('恭喜获得奖品：xxxxx')
+				})
 
-				// 模拟请求
-				let stoTimer = setTimeout(() => {
-					clearTimeout(stoTimer)
-					stoTimer = null
-
-					// 判断是否由前端控制概率
-					// 前端控制概率的情况下，需要拿到最接近随机权重且大于随机权重的值
-					// 后端控制概率的情况下，通常会直接返回 prizeId
-					if (this.isFrontend && this.weightTotal) {
-						console.warn('###当前处于前端控制中奖概率，安全起见，强烈建议由后端控制###')
-						console.log('当前权重总和为 =>', this.weightTotal)
-
-						// 注意这里使用了 Math.ceil，如果某个权重的值为 0，则始终无法中奖
-						let weight = Math.ceil(Math.random() * this.weightTotal)
-						console.log('本次权重随机数 =>', weight)
-
-						// 生成大于等于随机权重的数组
-						let tempMaxArrs = []
-						list.forEach((item) => {
-							if (item.weight >= weight) {
-								tempMaxArrs.push(item.weight)
-							}
-						})
-
-						// 如果大于随机权重的数组有值，先对这个数组排序然后取值
-						// 反之新建一个临时的包含所有权重的已排序数组，然后取值
-						if (tempMaxArrs.length) {
-							tempMaxArrs.sort((a, b) => a - b)
-							this.prizeIndex = this.weightArr.indexOf(tempMaxArrs[0])
-						} else {
-							let tempWeightArr = [...this.weightArr]
-							tempWeightArr.sort((a, b) => a - b)
-							this.prizeIndex = this.weightArr.indexOf(tempWeightArr[tempWeightArr.length - 1])
-						}
-					} else {
-						// 这里随机产生的 prizeId 是模拟后端返回的 prizeId
-						let prizeId = Math.floor(Math.random() * list.length)
-						list.forEach((item, index) => {
-							if (item.prizeId === prizeId) {
-								// 中奖下标
-								this.prizeIndex = index
-							}
-						})
-					}
-
-					console.log('本次抽中奖品 =>', this.prizeList[this.prizeIndex].name)
-					console.log('本次奖品库存 =>', this.prizeList[this.prizeIndex].stock)
-				}, 200)
 			},
 			// 本次抽奖结束
 			handleDrawEnd() {
@@ -229,10 +121,127 @@
 				console.log('抽奖转盘绘制完成')
 				uni.hideLoading()
 				// uni.showToast({
-					// title: '奖品准备就绪'
+				// title: '奖品准备就绪'
 				// })
 				this.$u.toast('奖品准备就绪')
-			}
+			},
+
+			// 模拟请求奖品列表
+			// getMockPrizeList() {
+			// 	let stoTimer = setTimeout(() => {
+			// 		clearTimeout(stoTimer)
+			// 		stoTimer = null
+
+			// 		// stock 奖品库存
+			// 		// weight 中奖概率，数值越大中奖概率越高
+			// 		this.prizeList = [{
+			// 				prizeId: 1,
+			// 				name: '0.1元现金',
+			// 				stock: 10,
+			// 				weight: 1,
+			// 				imgSrc: '/static/lottery-prize/git.png'
+			// 			},
+			// 			{
+			// 				prizeId: 2,
+			// 				name: '10元现金',
+			// 				stock: 0,
+			// 				weight: 0
+			// 			},
+			// 			{
+			// 				prizeId: 3,
+			// 				name: '5元话费',
+			// 				stock: 1,
+			// 				weight: 0
+			// 			},
+			// 			{
+			// 				prizeId: 4,
+			// 				name: '50元现金',
+			// 				stock: 0,
+			// 				weight: 0
+			// 			},
+			// 			{
+			// 				prizeId: 5,
+			// 				name: '1卷抽纸',
+			// 				stock: 3,
+			// 				weight: 3
+			// 			},
+			// 			{
+			// 				prizeId: 6,
+			// 				name: '0.2元现金',
+			// 				stock: 8,
+			// 				weight: 2
+			// 			},
+			// 			{
+			// 				prizeId: 7,
+			// 				name: '谢谢参与',
+			// 				stock: 100,
+			// 				weight: 10000
+			// 			},
+			// 			{
+			// 				prizeId: 8,
+			// 				name: '100金币',
+			// 				stock: 100,
+			// 				weight: 1000
+			// 			}
+			// 		]
+
+			// 		// 计算出权重的总和并生成权重数组
+			// 		if (this.isFrontend) {
+			// 			this.prizeList.forEach((item) => this.weightTotal += item.weight)
+			// 			this.weightArr = this.prizeList.map((item) => item.weight)
+			// 		}
+			// 	}, 500)
+			// },
+			// mockLottery() {
+			// 	// 模拟请求
+			// 	let stoTimer = setTimeout(() => {
+			// 		clearTimeout(stoTimer)
+			// 		stoTimer = null
+
+			// 		// 判断是否由前端控制概率
+			// 		// 前端控制概率的情况下，需要拿到最接近随机权重且大于随机权重的值
+			// 		// 后端控制概率的情况下，通常会直接返回 prizeId
+			// 		if (this.isFrontend && this.weightTotal) {
+			// 			console.warn('###当前处于前端控制中奖概率，安全起见，强烈建议由后端控制###')
+			// 			console.log('当前权重总和为 =>', this.weightTotal)
+
+			// 			// 注意这里使用了 Math.ceil，如果某个权重的值为 0，则始终无法中奖
+			// 			let weight = Math.ceil(Math.random() * this.weightTotal)
+			// 			console.log('本次权重随机数 =>', weight)
+
+			// 			// 生成大于等于随机权重的数组
+			// 			let tempMaxArrs = []
+			// 			list.forEach((item) => {
+			// 				if (item.weight >= weight) {
+			// 					tempMaxArrs.push(item.weight)
+			// 				}
+			// 			})
+
+			// 			// 如果大于随机权重的数组有值，先对这个数组排序然后取值
+			// 			// 反之新建一个临时的包含所有权重的已排序数组，然后取值
+			// 			if (tempMaxArrs.length) {
+			// 				tempMaxArrs.sort((a, b) => a - b)
+			// 				this.prizeIndex = this.weightArr.indexOf(tempMaxArrs[0])
+			// 			} else {
+			// 				let tempWeightArr = [...this.weightArr]
+			// 				tempWeightArr.sort((a, b) => a - b)
+			// 				this.prizeIndex = this.weightArr.indexOf(tempWeightArr[tempWeightArr.length - 1])
+			// 			}
+			// 		} else {
+			// 			// 这里随机产生的 prizeId 是模拟后端返回的 prizeId
+			// 			let prizeId = Math.floor(Math.random() * list.length)
+			// 			list.forEach((item, index) => {
+			// 				if (item.prizeId === prizeId) {
+			// 					// 中奖下标
+			// 					this.prizeIndex = index
+			// 				}
+			// 			})
+			// 		}
+
+			// 		console.log('本次抽中奖品 =>', this.prizeList[this.prizeIndex].name)
+			// 		console.log('本次奖品库存 =>', this.prizeList[this.prizeIndex].stock)
+			// 	}, 200)
+			// }
 		},
 		onLoad() {
 			// 模拟请求奖品数据

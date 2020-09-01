@@ -1,10 +1,11 @@
+import md5Libs from "uview-ui/libs/function/md5";
 // 这里的Vue为Vue对象(非创建出来的实例)，vm为main.js中“Vue.use(httpInterceptor, app)”这一句的第二个参数，
 // 为一个Vue的实例，也即每个页面的"this"
 // 如果需要了解这个install方法是什么，请移步：https://uviewui.com/components/vueUse.html
 const install = (Vue, vm) => {
 	// 此为自定义配置参数，具体参数见上方说明
 	Vue.prototype.$u.http.setConfig({
-		baseUrl: 'https://api.example.com', // 请求的本域名
+		baseUrl: 'http://106.54.234.86:39080', // 请求的本域名
 		method: 'POST',
 		// 设置为json，返回后会对数据进行一次JSON.parse()
 		dataType: 'json',
@@ -16,6 +17,7 @@ const install = (Vue, vm) => {
 		// 配置请求头信息
 		header: {
 			'content-type': 'application/json;charset=UTF-8'
+			// 'content-type': 'application/x-www-form-urlencoded'
 		}
 	});
 
@@ -36,10 +38,13 @@ const install = (Vue, vm) => {
 		// 所以哪怕您重新登录修改了Storage，下一次的请求将会是最新值
 		// const token = uni.getStorageSync('token');
 		// config.header.token = token;
-		config.header.Token = 'xxxxxx';
+		
+		// config.header.Token = 'xxxxxx';
+		// console.log(config);
+		config.header.c = vm.$store.state.token;
 
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
-		if (config.url == '/user/login') config.header.noToken = true;
+		// if (config.url == '/user/login') config.header.noToken = true;
 		// 最后需要将config进行return
 		return config;
 		// 如果return一个false值，则会取消本次请求
@@ -58,10 +63,11 @@ const install = (Vue, vm) => {
 			vm.$u.toast('验证失败，请重新登录');
 			setTimeout(() => {
 				// 此为uView的方法，详见路由相关文档
-				vm.$u.route('/pages/user/login')
+				vm.$u.route('/pages/login/login')
 			}, 1500)
 			return false;
 		} else {
+			console.log(res);
 			// 如果返回false，则会调用Promise的reject回调，
 			// 并将进入this.$u.post(url).then().catch(res=>{})的catch回调中，res为服务端的返回值
 			return false;

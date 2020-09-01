@@ -21,6 +21,10 @@
 				"navigationBarTitleText": "抽奖转盘"
 			}
         }
+        ,{
+            "path" : "pages/prize-history/prize-history",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
