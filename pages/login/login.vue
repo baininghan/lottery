@@ -14,7 +14,7 @@
 					<view class="login-type-form">
 						<view class="input-item">
 							<text class="iconfont iconzhanghuffffffpx"></text>
-							<input class="login-type-input" type="number" name="mobile" v-model="loginParams.mobile" placeholder="请输入手机号码"
+							<input class="login-type-input" type="number" name="account" v-model="loginParams.account" placeholder="请输入账号"
 							 maxlength="11" />
 						</view>
 						<view class="input-item">
@@ -26,7 +26,6 @@
 						登录
 					</button>
 				</block>
-
 			</view>
 		</view>
 		<view class="login-type-bottom text-active">
@@ -35,11 +34,13 @@
 	</view>
 </template>
 <script>
+	import {mapState, mapMutations, mapGetters} from 'vuex'
+	
 	export default {
 		data() {
 			return {
 				loginParams: {
-					mobile: '',
+					account: '',
 					password: ''
 				},
 				btnLoading: false,
@@ -52,11 +53,24 @@
 			this.tabCurrentIndex = parseInt(options.type || 0, 10);
 		},
 		methods: {
-			// 提交表单
+			...mapMutations(['login']),
 			async toLogin() {
-				uni.showToast({
-					title: '点击了登录按钮'
-				});
+				if(this.$u.test.isEmpty(this.loginParams.account)) {
+					this.$u.toast('请输入账号')
+					return false;
+				}
+				if(this.$u.test.isEmpty(this.loginParams.password)) {
+					this.$u.toast('请输入密码')
+					return false;
+				}
+				
+				this.$u.login('/login', this.loginParams).then(res => {
+					this.$u.toast('登录成功')
+					this.login(res)
+					uni.navigateTo({
+						url: '../form/form'
+					})
+				})
 			}
 		}
 	};
