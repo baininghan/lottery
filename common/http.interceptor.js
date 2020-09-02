@@ -42,9 +42,10 @@ const install = (Vue, vm) => {
 		// config.header.Token = 'xxxxxx';
 		// console.log(config);
 		if(vm.$store.state.token == '') {
-			uni.navigateTo({
-				url: '/pages/login/login'
-			})
+			vm.$u.toast('登录过期，请重新登录');
+			setTimeout(() => {
+				vm.$u.route('/pages/login/login')
+			}, 1500)
 			return false
 		}
 		config.header.c = vm.$store.state.token;

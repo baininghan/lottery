@@ -96,6 +96,7 @@
 			// 本次抽奖开始
 			handleDrawStart() {
 				this.targetName = ''
+				this.prizeIndex = -1
 
 				// let list = [...this.prizeList]
 				// this.mockLottery(list)
@@ -123,9 +124,9 @@
 			// 本次抽奖结束
 			handleDrawEnd() {
 				uni.showModal({
-					title: '恭喜获得奖品' + this.prizeList[this.prizeIndex].awardItemName,
+					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName,
 				})
-				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].awardItemName
+				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName
 			},
 			// 抽奖转盘绘制完成
 			handleDrawFinish() {
