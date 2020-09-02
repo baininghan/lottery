@@ -1,6 +1,3 @@
-import user from '../api/user.js'
-import prize from '../api/prize.js'
-
 // 如果没有通过拦截器配置域名的话，可以在这里写上完整的URL(加上域名部分)
 // let hotSearchUrl = '/ebapi/store_api/hot_search';
 // let indexUrl = '/ebapi/public_api/index';
