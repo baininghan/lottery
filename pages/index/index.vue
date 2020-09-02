@@ -96,7 +96,6 @@
 			// 本次抽奖开始
 			handleDrawStart() {
 				this.targetName = ''
-				this.prizeIndex = -1
 
 				// let list = [...this.prizeList]
 				// this.mockLottery(list)
@@ -111,6 +110,8 @@
 					playerName: '4001',
 					playerIdentityNo: '111'
 				}
+				console.log(this.targetName);
+				console.log(this.prizeIndex);
 				console.log(params);
 				this.$u.api.lottery(params).then(res => {
 					this.prizeIndex = res.awardItemId
@@ -125,6 +126,9 @@
 			handleDrawEnd() {
 				uni.showModal({
 					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName,
+					complete: () => {
+						this.prizeIndex = -1
+					}
 				})
 				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName
 			},
@@ -163,6 +167,7 @@
 	.home-result {
 		text-align: center;
 		margin-top: 50px;
+		height: 20rpx;
 	}
 
 	.home-result__text {

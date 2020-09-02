@@ -30,8 +30,8 @@
 					color: 'red'
 				},
 				user: {
-					username: '',
-					tel: '',
+					username: '张三',
+					tel: '18676765432',
 					// sex: '',
 					// idNo: ''
 				},
