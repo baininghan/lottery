@@ -38,7 +38,9 @@
 		mapMutations,
 		mapGetters
 	} from 'vuex'
+
 	import md5Libs from '../../uview-ui/libs/function/md5.js'
+	import base64 from "../../js_sdk/base64"
 
 	export default {
 		data() {
@@ -70,10 +72,12 @@
 
 				let userName = this.loginParams.userName;
 				let password = this.loginParams.password;
-				let params = {'userName': userName}
-				let c = md5Libs.md5(userName + md5Libs.md5(password));
+				let params = {
+					'userName': userName
+				}
+				let c = base64.encode(userName + ',' + password);
 				this.setToken(c)
-				
+
 				this.$u.api.login(this.loginParams).then(res => {
 					this.$u.toast('登录成功')
 					this.login(res)
@@ -84,11 +88,23 @@
 					console.log(res);
 				})
 
-				
-				
-				// this.$u.post('/business/m/login?userName=' + userName, params).then(res => {
-				// 	console.log(res);
-				// });
+				// uni.request({
+				// 	url: 'http://106.54.234.86:39080/business/m/login?userName=' + userName,
+				// 	method: 'POST',
+				// 	data: params,
+				// 	dataType: 'json',
+				// 	header: {
+				// 		c: c,
+				// 		'content-type': 'application/json;charset=UTF-8'
+				// 	},
+				// 	success: (e) => {
+				// 		console.log(e.data);
+				// 	},
+				// 	fail: (e) => {
+				// 		console.log(e);
+				// 	}
+				// })
+
 			}
 		}
 	};

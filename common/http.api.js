@@ -8,8 +8,9 @@ const install = (Vue, vm) => {
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	let login = (params = {}) => vm.$u.post('/business/m/login', params);
 	let lottery = (params = {}) => vm.$u.post('/business/m/lottery', params);
+	let getPrizeList = (params = {}) => vm.$u.get('/business/m/lottery/awards', params);
 	
-	vm.$u.api = {login, lottery}
+	vm.$u.api = {login, lottery, getPrizeList}
 	// Object.assign(vm.$u.api, user, prize)
 }
 

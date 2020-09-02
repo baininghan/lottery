@@ -20,7 +20,6 @@ const store = new Vuex.Store({
 	mutations: {
 		login(state, userInfo) {
 			state.userInfo = userInfo
-			state.userInfo.loginTime = new Date().getTime()
 			state.hasLogin = true
 			// 本地存储用户信息
 			uni.setStorage({

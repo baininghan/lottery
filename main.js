@@ -10,6 +10,7 @@ Vue.use(uView)
 
 import store from './store'
 Vue.config.$store = store
+Vue.config.$baseUrl = 'http://106.54.234.86:39080'
 
 const app = new Vue({
 	store,

@@ -1,9 +1,0 @@
-// 登录接口
-let login = (params = {}) => vm.$u.post('/business/m/login?userName=admin', params);
-
-// 表单提交接口
-let getInfo = (params = {}) => vm.$u.post(url, params);
-
-export default {
-	getInfo, login
-}

@@ -41,6 +41,12 @@ const install = (Vue, vm) => {
 		
 		// config.header.Token = 'xxxxxx';
 		// console.log(config);
+		if(vm.$store.state.token == '') {
+			uni.navigateTo({
+				url: '/pages/login/login'
+			})
+			return false
+		}
 		config.header.c = vm.$store.state.token;
 
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
@@ -53,11 +59,14 @@ const install = (Vue, vm) => {
 	
 	// 响应拦截，如配置，每次请求结束都会执行本方法
 	Vue.prototype.$u.http.interceptor.response = (res) => {
-		if (res.code == 200) {
+		console.log('=== 响应拦截报文 ===');
+		console.log(res);
+		console.log('=== 响应拦截报文 ===');
+		if (res.code == 0) {
 			// res为服务端返回值，可能有code，result等字段
 			// 这里对res.result进行返回，将会在this.$u.post(url).then(res => {})的then回调中的res得到
 			// 如果配置了originalData为true，请留意这里的返回值
-			return res.result;
+			return res.data;
 		} else if (res.code == 201) {
 			// 假设201为token失效，这里跳转登录
 			vm.$u.toast('验证失败，请重新登录');
@@ -67,7 +76,6 @@ const install = (Vue, vm) => {
 			}, 1500)
 			return false;
 		} else {
-			console.log(res);
 			// 如果返回false，则会调用Promise的reject回调，
 			// 并将进入this.$u.post(url).then().catch(res=>{})的catch回调中，res为服务端的返回值
 			return false;
