@@ -161,15 +161,15 @@
 			},
 			// 本次抽奖结束
 			handleDrawEnd() {
+				this.prizeIndex = -1
 				uni.showModal({
 					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex-1].itemName,
-					complete: () => {
-						this.prizeIndex = -1
-						setTimeout(() => {
+					success: (e) => {
+						if(e.confirm) {
 							uni.reLaunch({
 								url: '../form/form'
 							})
-						}, 1500)
+						}
 					}
 				})
 				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName
