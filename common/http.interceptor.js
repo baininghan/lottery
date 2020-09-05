@@ -49,7 +49,6 @@ const install = (Vue, vm) => {
 			}, 1500)
 			return false
 		}
-		console.log(token);
 		config.header.c = token;
 
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
@@ -62,9 +61,9 @@ const install = (Vue, vm) => {
 
 	// 响应拦截，如配置，每次请求结束都会执行本方法
 	Vue.prototype.$u.http.interceptor.response = (res) => {
-		console.log('=== 响应拦截报文 ===');
-		console.log(res);
-		console.log('=== 响应拦截报文 ===');
+		// console.log('=== 响应拦截报文 ===');
+		// console.log(res);
+		// console.log('=== 响应拦截报文 ===');
 		if (res.code == 0) {
 			// res为服务端返回值，可能有code，result等字段
 			// 这里对res.result进行返回，将会在this.$u.post(url).then(res => {})的then回调中的res得到
@@ -79,7 +78,12 @@ const install = (Vue, vm) => {
 			}, 1500)
 			return false;
 		} else {
-			vm.$store.state.prizeIndex = -1
+			vm.$u.toast(res.msg);
+			setTimeout(() => {
+				uni.reLaunch({
+					url: '/pages/login/login.vue'
+				})
+			},1500)
 			// 如果返回false，则会调用Promise的reject回调，
 			// 并将进入this.$u.post(url).then().catch(res=>{})的catch回调中，res为服务端的返回值
 			return false;

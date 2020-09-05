@@ -20,7 +20,7 @@
 		<view class="u-padding-30">
 			<u-table border-color="#fff591" color="#fff591" bg-color="red" :th-style="thStyle">
 				<u-tr>
-					<u-th>奖项</u-th>
+					<u-th>编号</u-th>
 					<u-th>奖品</u-th>
 				</u-tr>
 				<u-tr v-for="(item, index) in prizeList" :key="index">
@@ -80,7 +80,7 @@
 					bizType2: '0',
 					money: '10000',
 					playerName: '4001',
-					playerIdentityNo: '111'
+					playerIdentityNo: ''
 				},
 				prizeName: ''
 			}
@@ -119,6 +119,7 @@
 			getPrizeList() {
 				this.$u.api.getPrizeList().then(res => {
 					this.prizeList = res;
+					console.log(res);
 				}).catch(err => {
 					console.log(err);
 				})
