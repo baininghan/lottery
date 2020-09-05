@@ -30,8 +30,8 @@
 					color: 'red'
 				},
 				user: {
-					playerName: '张三',
-					playerTel: '18676765432',
+					playerName: '',
+					playerTel: '',
 					// sex: '',
 					// idNo: ''
 				},
