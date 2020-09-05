@@ -81,14 +81,15 @@
 					money: '10000',
 					playerName: '4001',
 					playerIdentityNo: '111'
-				}
+				},
+				prizeName: ''
 			}
 		},
 		onLoad(params) {
 			let user = JSON.parse(decodeURIComponent(params.user))
 			
 			this.params.playerName = user.playerName
-			this.params.playerTel = user.playerName
+			this.params.playerTel = user.playerTel
 			
 			this.getPrizeList()
 		},
@@ -116,63 +117,26 @@
 				// let list = [...this.prizeList]
 				// this.mockLottery(list)
 				
-				// this.$u.api.lottery(this.params).then(res => {
-				// 	this.prizeIndex = res.awardItemId
-				// }).catch(res => {
-				// 	// vm.$u.toast(res.msg);
-				// 	this.prizeIndex = -1
-				// 	this.setPrizeIndex(-1)
-				// })
-				const token = uni.getStorageSync('token');
-				if(token == '') {
-					this.$u.toast('登录过期，请重新登录！')
-					setTimeout(() => {
-						uni.navigateTo({
-							url: '../login/login'
-						})
-					}, 1500)
-					
-					return false;
-				}
-				
-				uni.request({
-					url: this.$baseUrl +'/business/m/lottery',
-					method: 'POST',
-					data: this.params,
-					header: {
-						'content-type': 'application/json;charset=UTF-8',
-						'c': token
-					},
-					success: (e) => {
-						if(e.statusCode == 200) {
-							let data = e.data;
-							if(data.code == 0) {
-								this.prizeIndex = data.awardItemId
-							} else {
-								this.$u.toast(data.msg);
-							}
-						}
-					},
-					fail: (e) => {
-						this.prizeIndex = -1
-					}
+				this.$u.api.lottery(this.params).then(res => {
+					this.prizeIndex = res.awardItemId - 1
+					this.prizeName = res.awardItemName
+				}).catch(res => {
+					console.log(res);
+					this.prizeIndex = -1
 				})
-
 			},
 			// 本次抽奖结束
 			handleDrawEnd() {
 				this.prizeIndex = -1
 				uni.showModal({
-					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex-1].itemName,
+					content: '恭喜获得奖品【' + this.prizeName + '】',
 					success: (e) => {
-						if(e.confirm) {
-							uni.reLaunch({
-								url: '../form/form'
-							})
-						}
+						uni.reLaunch({
+							url: '../form/form'
+						})
 					}
 				})
-				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName
+				this.targetName = '恭喜获得奖品' + this.prizeName
 			},
 			// 抽奖转盘绘制完成
 			handleDrawFinish() {
