@@ -36,19 +36,20 @@ const install = (Vue, vm) => {
 
 		// 方式四，如果token放在了Storage本地存储中，拦截是每次请求都执行的
 		// 所以哪怕您重新登录修改了Storage，下一次的请求将会是最新值
-		// const token = uni.getStorageSync('token');
+		const token = uni.getStorageSync('token');
 		// config.header.token = token;
-		
+
 		// config.header.Token = 'xxxxxx';
 		// console.log(config);
-		if(vm.$store.state.token == '') {
+		if (token == '') {
 			vm.$u.toast('登录过期，请重新登录');
 			setTimeout(() => {
 				vm.$u.route('/pages/login/login')
 			}, 1500)
 			return false
 		}
-		config.header.c = vm.$store.state.token;
+		console.log(token);
+		config.header.c = token;
 
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
 		// if (config.url == '/user/login') config.header.noToken = true;
@@ -57,7 +58,7 @@ const install = (Vue, vm) => {
 		// 如果return一个false值，则会取消本次请求
 		// if(config.url == '/user/rest') return false; // 取消某次请求
 	}
-	
+
 	// 响应拦截，如配置，每次请求结束都会执行本方法
 	Vue.prototype.$u.http.interceptor.response = (res) => {
 		console.log('=== 响应拦截报文 ===');
@@ -77,6 +78,7 @@ const install = (Vue, vm) => {
 			}, 1500)
 			return false;
 		} else {
+			vm.$store.state.prizeIndex = -1
 			// 如果返回false，则会调用Promise的reject回调，
 			// 并将进入this.$u.post(url).then().catch(res=>{})的catch回调中，res为服务端的返回值
 			return false;

@@ -37,6 +37,7 @@
 
 <script>
 	import AlmostLottery from '@/components/almost-lottery/almost-lottery.vue'
+	import {mapState, mapMutations} from 'vuex'
 
 	export default {
 		name: 'Home',
@@ -67,13 +68,28 @@
 				hasLogin: false,
 				thStyle: {
 					"bg-color": "#f56726"
+				},
+				
+				
+				// 抽奖条件
+				params: {
+					certNo: '',
+					playerIdentityNo: '',
+					playerTel: '',
+					bizType: '0',
+					bizType2: '0',
+					money: '10000',
+					playerName: '4001',
+					playerIdentityNo: '111'
 				}
 			}
 		},
-		// created() {
-		// 	this.hasLogin = this.$store.hasLogin
-		// },
-		onLoad() {
+		onLoad(params) {
+			let user = JSON.parse(decodeURIComponent(params.user))
+			
+			this.params.playerName = user.playerName
+			this.params.playerTel = user.playerName
+			
 			this.getPrizeList()
 		},
 		onUnload() {
@@ -99,35 +115,61 @@
 
 				// let list = [...this.prizeList]
 				// this.mockLottery(list)
-				let params = {
-					certNo: '123',
-					playerName: '',
-					playerIdentityNo: '',
-					playerTel: '186',
-					bizType: '0',
-					bizType2: '0',
-					money: '10000',
-					playerName: '4001',
-					playerIdentityNo: '111'
+				
+				// this.$u.api.lottery(this.params).then(res => {
+				// 	this.prizeIndex = res.awardItemId
+				// }).catch(res => {
+				// 	// vm.$u.toast(res.msg);
+				// 	this.prizeIndex = -1
+				// 	this.setPrizeIndex(-1)
+				// })
+				const token = uni.getStorageSync('token');
+				if(token == '') {
+					this.$u.toast('登录过期，请重新登录！')
+					setTimeout(() => {
+						uni.navigateTo({
+							url: '../login/login'
+						})
+					}, 1500)
+					
+					return false;
 				}
-				console.log(this.targetName);
-				console.log(this.prizeIndex);
-				console.log(params);
-				this.$u.api.lottery(params).then(res => {
-					this.prizeIndex = res.awardItemId
-				}).catch(res => {
-					console.log(res);
-					// vm.$u.toast(res.msg);
-					this.prizeIndex = -1
+				
+				uni.request({
+					url: this.$baseUrl +'/business/m/lottery',
+					method: 'POST',
+					data: this.params,
+					header: {
+						'content-type': 'application/json;charset=UTF-8',
+						'c': token
+					},
+					success: (e) => {
+						if(e.statusCode == 200) {
+							let data = e.data;
+							if(data.code == 0) {
+								this.prizeIndex = data.awardItemId
+							} else {
+								this.$u.toast(data.msg);
+							}
+						}
+					},
+					fail: (e) => {
+						this.prizeIndex = -1
+					}
 				})
 
 			},
 			// 本次抽奖结束
 			handleDrawEnd() {
 				uni.showModal({
-					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName,
+					content: '恭喜获得奖品' + this.prizeList[this.prizeIndex-1].itemName,
 					complete: () => {
 						this.prizeIndex = -1
+						setTimeout(() => {
+							uni.reLaunch({
+								url: '../form/form'
+							})
+						}, 1500)
 					}
 				})
 				this.targetName = '恭喜获得奖品' + this.prizeList[this.prizeIndex].itemName

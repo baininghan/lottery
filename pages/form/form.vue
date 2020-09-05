@@ -2,11 +2,11 @@
 <template>
 	<view class="u-padding-40">
 		<u-form :model="user" ref="uForm" label-position="top">
-			<u-form-item left-icon="account" label="姓名" prop="username" label-width="150" :left-icon-style="leftIconStyle" required>
-				<u-input v-model="user.username" placeholder="请填写姓名" />
+			<u-form-item left-icon="account" label="姓名" prop="playerName" label-width="150" :left-icon-style="leftIconStyle" required>
+				<u-input v-model="user.playerName" placeholder="请填写姓名" />
 			</u-form-item>
-			<u-form-item left-icon="phone" label="电话" prop="tel" label-width="150" :left-icon-style="leftIconStyle" required>
-				<u-input v-model="user.tel" placeholder="请填写手机号码" />
+			<u-form-item left-icon="phone" label="电话" prop="playerTel" label-width="150" :left-icon-style="leftIconStyle" required>
+				<u-input v-model="user.playerTel" placeholder="请填写手机号码" />
 			</u-form-item>
 			<!-- <u-form-item left-icon="man" label="性别" label-width="150" :left-icon-style="leftIconStyle">
 				<u-input v-model="user.sex" type="select" @tap="openSexSelect" placeholder="请选择性别" />
@@ -30,8 +30,8 @@
 					color: 'red'
 				},
 				user: {
-					username: '张三',
-					tel: '18676765432',
+					playerName: '张三',
+					playerTel: '18676765432',
 					// sex: '',
 					// idNo: ''
 				},
@@ -46,16 +46,16 @@
 					},
 				],
 				rules: {
-					username: [{
+					playerName: [{
 						required: true,
 						message: '请填写姓名',
 						min: 5,
 						trigger: ['change', 'blur'],
 						validator: (rule, value, callback) => {
-							return this.$u.test.chinese(this.user.username)
+							return this.$u.test.chinese(this.user.playerName)
 						}
 					}],
-					tel: [{
+					playerTel: [{
 						required: true,
 						message: '请填写手机号码',
 						type: 'number',
@@ -91,7 +91,7 @@
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
 						uni.navigateTo({
-							url: '../index/index?user=' + JSON.stringify(this.user)
+							url: '../index/index?user=' + encodeURIComponent(JSON.stringify(this.user))
 						})
 					} else {
 						this.$u.toast('验证失败')

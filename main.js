@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -7,10 +8,8 @@ App.mpType = 'app'
 
 import uView from "uview-ui";
 Vue.use(uView)
-
-import store from './store'
 Vue.config.$store = store
-Vue.config.$baseUrl = 'http://106.54.234.86:39080'
+Vue.prototype.$baseUrl = 'http://106.54.234.86:39080'
 
 const app = new Vue({
 	store,

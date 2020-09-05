@@ -77,6 +77,7 @@
 				}
 				let c = base64.encode(userName + ',' + password);
 				this.setToken(c)
+				uni.setStorageSync('token', c)
 
 				this.$u.api.login(this.loginParams).then(res => {
 					this.$u.toast('登录成功')
