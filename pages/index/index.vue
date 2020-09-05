@@ -86,10 +86,23 @@
 			}
 		},
 		onLoad(params) {
-			let user = JSON.parse(decodeURIComponent(params.user))
+			if(params.user) {
+				let user = JSON.parse(decodeURIComponent(params.user))
+				
+				this.params.playerName = user.playerName
+				this.params.playerTel = user.playerTel
+			} else {
+				if(this.$store.state.hasLogin) {
+					uni.navigateTo({
+						url: '../form/form'
+					})
+				} else {
+					uni.navigateTo({
+						url: '../login/login'
+					})
+				}
+			}
 			
-			this.params.playerName = user.playerName
-			this.params.playerTel = user.playerTel
 			
 			this.getPrizeList()
 		},
