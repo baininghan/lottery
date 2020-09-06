@@ -117,6 +117,8 @@
 					return  '二等奖'
 				} else if(str == '3') {
 					return '三等奖'
+				} else {
+					return '纪念奖'
 				}
 			},
 			// 重新生成
@@ -129,9 +131,10 @@
 				this.$u.api.getPrizeList().then(res => {
 					this.prizeList = res;
 					
-					// imgSrc: '/static/lottery-prize/git.png',
 					this.prizeList.map(item => {
-						item.imgSrc = '/static/lottery-prize/prize.jpg'
+						if(item.id != 4) {
+							item.imgSrc = '/static/lottery-prize/prize.jpg'
+						}
 					})
 				}).catch(err => {
 					console.log(err);
