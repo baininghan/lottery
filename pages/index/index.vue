@@ -20,11 +20,11 @@
 		<view class="u-padding-30">
 			<u-table border-color="#fff591" color="#fff591" bg-color="red" :th-style="thStyle">
 				<u-tr>
-					<u-th>编号</u-th>
+					<u-th>奖项</u-th>
 					<u-th>奖品</u-th>
 				</u-tr>
 				<u-tr v-for="(item, index) in prizeList" :key="index">
-					<u-td>{{item.id}}</u-td>
+					<u-td>{{formatStr(item.id)}}</u-td>
 					<u-td>{{item.itemName}}</u-td>
 				</u-tr>
 			</u-table>
@@ -110,6 +110,15 @@
 			uni.hideLoading()
 		},
 		methods: {
+			formatStr(str) {
+				if(str == '1') {
+					return '一等奖'
+				} else if(str == '2') {
+					return  '二等奖'
+				} else if(str == '3') {
+					return '三等奖'
+				}
+			},
 			// 重新生成
 			handleInitCanvas() {
 				this.prizeList = []
@@ -119,7 +128,11 @@
 			getPrizeList() {
 				this.$u.api.getPrizeList().then(res => {
 					this.prizeList = res;
-					console.log(res);
+					
+					// imgSrc: '/static/lottery-prize/git.png',
+					this.prizeList.map(item => {
+						item.imgSrc = '/static/lottery-prize/prize.jpg'
+					})
 				}).catch(err => {
 					console.log(err);
 				})

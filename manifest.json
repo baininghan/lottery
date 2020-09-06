@@ -77,7 +77,7 @@
     },
     "h5" : {
         "title" : "在线抽奖",
-        "domain" : "http://106.54.234.86:39080",
+        "domain" : "https://lottery.suruantech.com",
         "router" : {
             "base" : "/h5/"
         },
